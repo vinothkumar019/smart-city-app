@@ -10,9 +10,6 @@ on:
       - main
 
 jobs:
-  # ----------------------------
-  # 1️⃣ Build Frontend (React)
-  # ----------------------------
   build_and_deploy:
     runs-on: ubuntu-latest
     name: Build and Deploy Frontend
@@ -33,20 +30,19 @@ jobs:
         working-directory: ./client
         run: npm run build
 
+      # 🆕 Updated to v4
       - name: Upload build files
         uses: actions/upload-artifact@v4
         with:
           name: client-build
           path: ./client/build
 
-  # ----------------------------
-  # 2️⃣ Deploy to Azure Static Web Apps
-  # ----------------------------
   deploy:
     needs: build_and_deploy
     runs-on: ubuntu-latest
     name: Deploy to Azure Static Web Apps
     steps:
+      # 🆕 Updated to v4
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
