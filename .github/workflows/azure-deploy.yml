@@ -10,15 +10,18 @@ on:
       - main
 
 jobs:
+  # ----------------------------
+  # 1️⃣ Build Frontend (React)
+  # ----------------------------
   build_and_deploy:
     runs-on: ubuntu-latest
     name: Build and Deploy Frontend
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -31,18 +34,21 @@ jobs:
         run: npm run build
 
       - name: Upload build files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: client-build
           path: ./client/build
 
+  # ----------------------------
+  # 2️⃣ Deploy to Azure Static Web Apps
+  # ----------------------------
   deploy:
     needs: build_and_deploy
     runs-on: ubuntu-latest
     name: Deploy to Azure Static Web Apps
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: client-build
           path: ./client/build
