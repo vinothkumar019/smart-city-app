@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../apiConfig.js';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -13,7 +14,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -22,7 +23,6 @@ function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ token saved only after successful login
         localStorage.setItem("token", data.token);
         alert("Login successful");
         navigate('/main');

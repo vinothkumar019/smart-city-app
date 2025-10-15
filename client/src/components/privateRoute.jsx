@@ -1,37 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import API_BASE_URL from '../apiConfig.js';
 
-function PrivateRoute({ children }) {
-  const [loading, setLoading] = useState(true);
-  const [ok, setOk] = useState(false);
-  const location = useLocation();
+function Main() {
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token || token === "null" || token === "undefined" || token.trim() === "") {
-      setOk(false);
-      setLoading(false);
-      return;
-    }
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
 
-    fetch("http://localhost:5000/api/auth/verify", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Not authenticated");
-        return res.json();
-      })
-      .then(() => setOk(true))
-      .catch(() => {
-        localStorage.removeItem("token"); // cleanup stale token
-        setOk(false);
-      })
-      .finally(() => setLoading(false));
+        if (!res.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const data = await res.json();
+        setUserData(data);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
-  if (loading) return <div>Checking authentication…</div>;
-  return ok ? children : <Navigate to="/login" state={{ from: location }} replace />;
+  return (
+    <div>
+      <h2>Welcome to Smart City Portal</h2>
+      {userData ? (
+        <div>
+          <p>Name: {userData.name}</p>
+          <p>Email: {userData.email}</p>
+        </div>
+      ) : (
+        <p>Loading user data...</p>
+      )}
+    </div>
+  );
 }
 
-export default PrivateRoute;
-
+export default Main;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../apiConfig.js';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ function Register() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -32,7 +33,6 @@ function Register() {
         }),
       });
 
-     
       if (!res.ok) {
         const errData = await res.json();
         alert(errData.message || "Registration failed");
@@ -41,7 +41,8 @@ function Register() {
 
       const data = await res.json();
       alert(data.message || "Registered successfully!");
-    
+      // Optionally, redirect to login page after registration
+      // window.location.href = "/login";
     } catch (err) {
       console.error("Registration error:", err);
       alert("Something went wrong. Please try again.");
